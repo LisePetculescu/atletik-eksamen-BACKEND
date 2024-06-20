@@ -19,7 +19,7 @@ public class Result {
     private int id;
 
     private LocalDate date;
-    private String resultValue;
+    private double resultValue;
 
     @ManyToOne
     private Participant participant;
@@ -27,7 +27,7 @@ public class Result {
     @ManyToOne
     private Discipline discipline;
 
-    public Result(LocalDate date, String resultValue, Participant participant, Discipline discipline) {
+    public Result(LocalDate date, double resultValue, Participant participant, Discipline discipline) {
         this.date = date;
         this.resultValue = resultValue;
         this.participant = participant;

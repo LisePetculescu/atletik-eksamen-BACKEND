@@ -42,8 +42,7 @@ public class ParticipantController {
 
         } catch (IllegalArgumentException e) {
             // Handle invalid input error
-            return ResponseEntity.badRequest().build();
-        }
+            return ResponseEntity.badRequest().build();        }
     }
 
     @PutMapping("/{id}")
@@ -69,7 +68,7 @@ public class ParticipantController {
             return ResponseEntity.ok("Participant deleted");
         } catch (IllegalArgumentException e) {
             // Handle invalid input error
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
 
     }
