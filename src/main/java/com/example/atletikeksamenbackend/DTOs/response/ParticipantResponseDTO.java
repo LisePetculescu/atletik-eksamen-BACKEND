@@ -15,4 +15,6 @@ public record ParticipantResponseDTO(int id, String name, String club, String ge
         this(id, name, Club, gender, ageGroup, null, null);
 
     }
+
+
 }
