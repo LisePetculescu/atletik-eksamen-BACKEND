@@ -53,13 +53,16 @@ public class ParticipantService {
         return toDTO(participantRepository.save(participantToUpdate));
     }
 
+
     public void deleteParticipant(int id) {
         // Check if the participant exists
-        participantRepository.findById(id)
+        Participant participant = participantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + id));
+
+
         // check if the participant has any results
-        Participant participant = participantRepository.findById(id).orElseThrow();
-        if (!participant.getResults().isEmpty()) {
+        boolean hasResults = participant.getResults().isEmpty();
+        if (!hasResults) {
             throw new IllegalArgumentException("Participant has results, cannot delete");
         }
 
