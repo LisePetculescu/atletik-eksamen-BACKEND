@@ -43,7 +43,6 @@ public class initData implements CommandLineRunner {
         createParticipants();
         System.out.println("Participants are initialized");
 
-
         createResults();
         System.out.println("Results are initialized");
     }
