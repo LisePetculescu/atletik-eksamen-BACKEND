@@ -9,6 +9,7 @@ import com.example.atletikeksamenbackend.models.Participant;
 import com.example.atletikeksamenbackend.models.Result;
 import com.example.atletikeksamenbackend.repositories.ClubRepository;
 import com.example.atletikeksamenbackend.repositories.ParticipantRepository;
+import com.example.atletikeksamenbackend.repositories.ResultRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +37,9 @@ class ParticipantServiceTest {
     @Mock
     private ClubRepository clubRepository;
 
+    @Mock
+    private ResultRepository resultRepository;
+
     @InjectMocks
     private ParticipantService participantService;
 
@@ -42,35 +47,11 @@ class ParticipantServiceTest {
     void setUp() {
         // Initialize clubRepository mock
         clubRepository = Mockito.mock(ClubRepository.class);
-        participantService = new ParticipantService(participantRepository, clubRepository);
+        participantService = new ParticipantService(participantRepository, clubRepository, resultRepository);
     }
 
 
-//    @Test
-//    void createParticipant() {
-//        // Arrange
-//        // represent the requestDTO and the participant object
-//        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doe", 45, null, Gender.BINARY);
-//        //represent the participant object that is returned from the repository
-//        Participant participant = new Participant("John Doe", 45, Gender.BINARY, new Club("ClubName"));
-//
-//        // Mock repository behavior
-//        when(participantRepository.save(any(Participant.class))).thenReturn(participant);
-//
-//        // Act
-//        ParticipantResponseDTO responseDTO = participantService.createParticipant(requestDTO);
-//
-//        // Assert
-//        assertNotNull(responseDTO);
-//        assertEquals("John Doe", responseDTO.name());
-//        assertEquals("BINARY", responseDTO.gender());
-//        assertEquals("SENIOR", responseDTO.ageGroup());
-//        assertEquals("ClubName", responseDTO.club());
-//
-//        // verify that the save method was called on the repository
-//        verify(participantRepository).save(any(Participant.class));
-//
-//    }
+
 
     @Test
     void createParticipant() {
@@ -100,40 +81,6 @@ class ParticipantServiceTest {
         verify(participantRepository).save(any(Participant.class));
     }
 
-
-
-
-//    @Test
-//    void updateParticipant() {
-//        // Arrange
-//        // Sample existing participant
-//        Participant existingParticipant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"));
-//        existingParticipant.setId(1); // Assign an ID to mock an existing participant
-//
-//        // Updated data in DTO
-//        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doan Updated", 32, "New ClubName", Gender.TRANSmTf);
-//
-//        // Mock repository behavior
-//        when(participantRepository.findById(1)).thenReturn(Optional.of(existingParticipant));
-//        when(participantRepository.save(any(Participant.class))).thenAnswer(invocation -> {
-//            Participant updatedParticipant = invocation.getArgument(0);
-//            updatedParticipant.setId(existingParticipant.getId()); // Ensure ID remains unchanged
-//            return updatedParticipant;
-//        });
-//
-//        // Act
-//        ParticipantResponseDTO responseDTO = participantService.updateParticipant(1, requestDTO);
-//
-//        // Assert
-//        assertNotNull(responseDTO);
-//        assertEquals("John Doan Updated", responseDTO.name());
-//        assertEquals("TRANSmTf", responseDTO.gender()); // Ensure gender is asserted correctly based on ParticipantResponseDTO
-//        assertEquals("ADULT", responseDTO.ageGroup()); // Assuming ADULT is a valid age group based on ParticipantResponseDTO
-//
-//        // Verify repository interactions
-//        verify(participantRepository).findById(1);
-//        verify(participantRepository).save(any(Participant.class)); // Ensure save was called with any Participant
-//    }
 
     @Test
     void updateParticipant() {
@@ -170,28 +117,21 @@ class ParticipantServiceTest {
     }
 
 
-
-    @Test
-    void deleteParticipant() {
-    }
-
-
-
-
     @Test
     void deleteParticipant_ParticipantExistsAndNoResults() {
         // Arrange
         Participant participant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"));
         participant.setId(1);
-        participant.setResults(Collections.emptyList());
 
         when(participantRepository.findById(1)).thenReturn(Optional.of(participant));
+        when(resultRepository.findAllByParticipant(participant)).thenReturn(Collections.emptyList());
 
         // Act
         participantService.deleteParticipant(1);
 
         // Assert
         verify(participantRepository).findById(1);
+        verify(resultRepository).findAllByParticipant(participant);
         verify(participantRepository).deleteById(1);
     }
 
@@ -228,22 +168,24 @@ class ParticipantServiceTest {
 
      */
 
+
+
     @Test
     void deleteParticipant_ParticipantHasResults() {
         // Arrange
         Participant participant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"));
         participant.setId(1);
-        participant.setResults(Collections.singletonList(new Result()));
-
+        List<Result> results = Collections.singletonList(new Result());
         when(participantRepository.findById(1)).thenReturn(Optional.of(participant));
+        when(resultRepository.findAllByParticipant(any())).thenReturn(results);
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> participantService.deleteParticipant(1), "Participant has results, cannot delete");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> participantService.deleteParticipant(1));
+        assertEquals("Participant has results, cannot delete", exception.getMessage());
 
         verify(participantRepository).findById(1);
+        verify(resultRepository).findAllByParticipant(participant);
         verify(participantRepository, never()).deleteById(anyInt());
-        System.out.println("Participant has results, cannot delete");
     }
-
 
 }

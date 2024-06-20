@@ -6,6 +6,7 @@ import com.example.atletikeksamenbackend.models.Club;
 import com.example.atletikeksamenbackend.models.Participant;
 import com.example.atletikeksamenbackend.repositories.ClubRepository;
 import com.example.atletikeksamenbackend.repositories.ParticipantRepository;
+import com.example.atletikeksamenbackend.repositories.ResultRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,15 +16,17 @@ public class ParticipantService {
 
     private final ParticipantRepository participantRepository;
     private final ClubRepository clubRepository;
+    private final ResultRepository resultRepository;
 
 
-    public ParticipantService(ParticipantRepository participantRepository, ClubRepository clubRepository) {
+    public ParticipantService(ParticipantRepository participantRepository, ClubRepository clubRepository, ResultRepository resultRepository) {
         this.participantRepository = participantRepository;
         this.clubRepository = clubRepository;
+        this.resultRepository = resultRepository;
     }
 
     public ParticipantResponseDTO toDTO(Participant participant) {
-        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString(), participant.getDisciplines(), participant.getResults());
+        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString());
     }
 
     public Participant fromDTO(ParticipantRequestDTO participantRequestDTO) {
@@ -48,17 +51,7 @@ public class ParticipantService {
         return toDTO(participantRepository.save(participant));
     }
 
-//    public ParticipantResponseDTO updateParticipant(int id, ParticipantRequestDTO participant) {
-//        Participant participantToUpdate = participantRepository.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + id));
-//
-//        participantToUpdate.setName(participant.name());
-//        participantToUpdate.setAge(participant.age());
-//        participantToUpdate.setGender(participant.gender());
-//        participantToUpdate.setClub(participant.club());
-//
-//        return toDTO(participantRepository.save(participantToUpdate));
-//    }
+
 
     public ParticipantResponseDTO updateParticipant(int id, ParticipantRequestDTO participantRequestDTO) {
         // Retrieve participant by id
@@ -81,20 +74,20 @@ public class ParticipantService {
         return toDTO(participantRepository.save(participantToUpdate));
     }
 
-
     public void deleteParticipant(int id) {
         // Check if the participant exists
         Participant participant = participantRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + id));
 
-
-        // check if the participant has any results
-        boolean hasResults = participant.getResults().isEmpty();
-        if (!hasResults) {
+        // Check if the participant has any results
+        boolean hasResults = !resultRepository.findAllByParticipant(participant).isEmpty();
+        if (hasResults) {
             throw new IllegalArgumentException("Participant has results, cannot delete");
         }
 
-        // delete the participant
+        // Delete the participant
         participantRepository.deleteById(id);
     }
+
+
 }

@@ -24,5 +24,4 @@ public class Club {
         this.name = name;
     }
 
-
 }

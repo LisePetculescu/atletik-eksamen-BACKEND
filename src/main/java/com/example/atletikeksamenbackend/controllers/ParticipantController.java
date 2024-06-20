@@ -70,8 +70,6 @@ public class ParticipantController {
             // Handle invalid input error
             return ResponseEntity.notFound().build();
         }
-
     }
-
 
 }

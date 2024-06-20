@@ -26,7 +26,7 @@ public class ResultService {
     }
 
     public ResultResponseDTO toDTO(Result result) {
-        return new ResultResponseDTO(result.getDate(), result.getResultValue(), result.getParticipant().getName(), result.getDiscipline().getName(), result.getResultType());
+        return new ResultResponseDTO(result.getId(), result.getDate(), result.getResultValue(), result.getDiscipline().getName(), result.getResultType());
     }
 
     public Result fromDTO(ResultRequestDTO resultRequestDTO) {
