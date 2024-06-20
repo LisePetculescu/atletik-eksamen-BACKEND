@@ -7,6 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -15,7 +20,7 @@ public class Participant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String name;
     private int age;
@@ -26,6 +31,18 @@ public class Participant {
     @ManyToOne
     private Club club;
 
+    @ManyToMany
+    @JoinTable(
+            name = "participant_discipline",
+            joinColumns = @JoinColumn(name = "participant_id"),
+            inverseJoinColumns = @JoinColumn(name = "discipline_id")
+    )
+    private Set<Discipline> disciplines = new HashSet<>();
+
+    @OneToMany(mappedBy = "participant")
+    private List<Result> results = new ArrayList<>();
+
+
     /* Transient field to get the age group of the participant based on the age.
 
        Transient fields are not persisted in the database but can be used in the
@@ -33,7 +50,7 @@ public class Participant {
        because they are calculated fields that can be calculated from other persisted
        fields in the database. */
     @Transient
-    private AgeGroup getAgeGroup() {
+    public AgeGroup getAgeGroup() {
         return AgeGroup.fromAge(this.age);
     }
 
@@ -43,6 +60,8 @@ public class Participant {
         this.gender = gender;
         this.club = club;
     }
+
+
 
 
 }
