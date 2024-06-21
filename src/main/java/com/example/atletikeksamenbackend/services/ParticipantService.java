@@ -1,6 +1,7 @@
 package com.example.atletikeksamenbackend.services;
 
 import com.example.atletikeksamenbackend.DTOs.request.ParticipantRequestDTO;
+import com.example.atletikeksamenbackend.DTOs.response.DisciplineResponseDTO;
 import com.example.atletikeksamenbackend.DTOs.response.ParticipantResponseDTO;
 import com.example.atletikeksamenbackend.models.Club;
 import com.example.atletikeksamenbackend.models.Participant;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ParticipantService {
@@ -27,8 +29,16 @@ public class ParticipantService {
     }
 
     public ParticipantResponseDTO toDTO(Participant participant) {
-        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString());
+        List<DisciplineResponseDTO> disciplines = participant.getResults().stream()
+                .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType().toString()))
+                .collect(Collectors.toList());
+
+        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString(), disciplines);
     }
+
+//    public ParticipantResponseDTO toDTO(Participant participant) {
+//        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString() );
+//    }
 
     public Participant fromDTO(ParticipantRequestDTO participantRequestDTO) {
         Club club = clubRepository.findByName(participantRequestDTO.clubName())
@@ -91,7 +101,18 @@ public class ParticipantService {
     }
 
 
+
+
     public Optional<ParticipantResponseDTO> getParticipantByName(String name) {
         return participantRepository.findByName(name).map(this::toDTO);
+    }
+
+    public List<DisciplineResponseDTO> getDisciplinesForParticipant(int participantId) {
+        Participant participant = participantRepository.findById(participantId)
+                .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + participantId));
+
+        return participant.getResults().stream()
+                .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType().toString()))
+                .collect(Collectors.toList());
     }
 }

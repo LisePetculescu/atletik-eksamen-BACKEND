@@ -1,6 +1,7 @@
 package com.example.atletikeksamenbackend.services;
 
 import com.example.atletikeksamenbackend.DTOs.request.ResultRequestDTO;
+import com.example.atletikeksamenbackend.DTOs.response.DisciplineResponseDTO;
 import com.example.atletikeksamenbackend.DTOs.response.ResultResponseDTO;
 import com.example.atletikeksamenbackend.models.Discipline;
 import com.example.atletikeksamenbackend.models.Participant;
@@ -10,7 +11,9 @@ import com.example.atletikeksamenbackend.repositories.ParticipantRepository;
 import com.example.atletikeksamenbackend.repositories.ResultRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ResultService {
@@ -26,7 +29,26 @@ public class ResultService {
     }
 
     public ResultResponseDTO toDTO(Result result) {
-        return new ResultResponseDTO(result.getId(), result.getDate(), result.getResultValue(), result.getDiscipline().getName(), result.getResultType());
+        List<DisciplineResponseDTO> disciplines = Collections.emptyList(); // Initialize as empty list by default
+
+        if (result.getParticipant().getResults() != null) {
+            disciplines = result.getParticipant().getResults().stream()
+                    .map(r -> new DisciplineResponseDTO(
+                            r.getDiscipline().getId(),
+                            r.getDiscipline().getName(),
+                            r.getDiscipline().getResultType().toString()))
+                    .collect(Collectors.toList());
+        }
+
+        return new ResultResponseDTO(
+                result.getId(),
+                result.getDate(),
+                result.getResultValue(),
+                result.getParticipant().getName(),
+                result.getDiscipline().getName(),
+                result.getResultType(),
+                disciplines
+        );
     }
 
     public Result fromDTO(ResultRequestDTO resultRequestDTO) {

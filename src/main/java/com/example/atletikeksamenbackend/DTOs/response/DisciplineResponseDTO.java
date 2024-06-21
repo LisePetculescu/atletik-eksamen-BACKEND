@@ -8,4 +8,4 @@ import com.example.atletikeksamenbackend.ENUMs.ResultType;
 //    }
 //}
 
-public record DisciplineResponseDTO(int id, String name, ResultType resultType) {}
+public record DisciplineResponseDTO(int id, String name, String resultType) {}

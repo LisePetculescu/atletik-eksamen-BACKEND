@@ -1,6 +1,7 @@
 package com.example.atletikeksamenbackend.controllers;
 
 import com.example.atletikeksamenbackend.DTOs.request.ParticipantRequestDTO;
+import com.example.atletikeksamenbackend.DTOs.response.DisciplineResponseDTO;
 import com.example.atletikeksamenbackend.DTOs.response.ParticipantResponseDTO;
 import com.example.atletikeksamenbackend.services.ParticipantService;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,12 @@ public class ParticipantController {
         Optional<ParticipantResponseDTO> participant = participantService.getParticipantByName(name);
 
         return participant.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{participantId}/disciplines")
+    public ResponseEntity<List<DisciplineResponseDTO>> getDisciplinesForParticipant(@PathVariable int participantId) {
+        List<DisciplineResponseDTO> disciplines = participantService.getDisciplinesForParticipant(participantId);
+        return ResponseEntity.ok(disciplines);
     }
 
     @PostMapping

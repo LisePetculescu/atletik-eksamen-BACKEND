@@ -17,12 +17,12 @@ public class DisciplineService {
     }
 
     public DisciplineResponseDTO toDTO(Discipline discipline) {
-        return new DisciplineResponseDTO(discipline.getId(), discipline.getName(), discipline.getResultType());
+        return new DisciplineResponseDTO(discipline.getId(), discipline.getName(), discipline.getResultType().toString());
     }
 
-    public Discipline fromDTO(DisciplineResponseDTO disciplineResponseDTO) {
-        return new Discipline(disciplineResponseDTO.name(), disciplineResponseDTO.resultType());
-    }
+//    public Discipline fromDTO(DisciplineResponseDTO disciplineResponseDTO) {
+//        return new Discipline(disciplineResponseDTO.name(), disciplineResponseDTO.resultType());
+//    }
 
     public List<DisciplineResponseDTO> getAllDisciplines() {
         List<Discipline> disciplines = disciplineRepository.findAll();

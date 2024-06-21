@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,7 +26,7 @@ public class Discipline {
     private ResultType resultType;
 
     @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Result> results = new HashSet<>();
+    private List<Result> results;
 
     public Discipline(String name, ResultType resultType) {
         this.name = name;
