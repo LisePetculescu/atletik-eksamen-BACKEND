@@ -56,7 +56,7 @@ class ParticipantServiceTest {
     @Test
     void createParticipant() {
         // Arrange
-        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doe", 45, "ClubName", Gender.BINARY);
+        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doe", 45, Gender.BINARY, "ClubName" );
         Club club = new Club("ClubName");
         Participant participant = new Participant("John Doe", 45, Gender.BINARY, club);
 
@@ -74,7 +74,7 @@ class ParticipantServiceTest {
         assertEquals("John Doe", responseDTO.name());
         assertEquals("BINARY", responseDTO.gender());
         assertEquals("SENIOR", responseDTO.ageGroup());
-        assertEquals("ClubName", responseDTO.club());
+        assertEquals("ClubName", responseDTO.clubName());
 
         // Verify repository interactions
         verify(clubRepository).findByName("ClubName");
@@ -90,7 +90,7 @@ class ParticipantServiceTest {
         existingParticipant.setId(1); // Assign an ID to mock an existing participant
 
         // Updated data in DTO
-        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doan Updated", 32, "New ClubName", Gender.MALE);
+        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doan Updated", 32, Gender.MALE,"New ClubName" );
 
         // Mock repository behavior
         when(participantRepository.findById(1)).thenReturn(Optional.of(existingParticipant));
