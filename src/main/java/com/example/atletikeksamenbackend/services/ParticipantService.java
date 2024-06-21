@@ -10,6 +10,7 @@ import com.example.atletikeksamenbackend.repositories.ResultRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParticipantService {
@@ -26,7 +27,7 @@ public class ParticipantService {
     }
 
     public ParticipantResponseDTO toDTO(Participant participant) {
-        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString());
+        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString());
     }
 
     public Participant fromDTO(ParticipantRequestDTO participantRequestDTO) {
@@ -90,4 +91,7 @@ public class ParticipantService {
     }
 
 
+    public Optional<ParticipantResponseDTO> getParticipantByName(String name) {
+        return participantRepository.findByName(name).map(this::toDTO);
+    }
 }

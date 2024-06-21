@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/participant")
@@ -29,6 +30,13 @@ public class ParticipantController {
     @GetMapping("/{id}")
     public ParticipantResponseDTO getParticipantById(@PathVariable int id) {
         return participantService.getParticipantById(id);
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<ParticipantResponseDTO> getParticipantByName(@PathVariable String name) {
+        Optional<ParticipantResponseDTO> participant = participantService.getParticipantByName(name);
+
+        return participant.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
