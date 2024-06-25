@@ -5,6 +5,6 @@ import java.time.LocalDate;
 //public record ResultResponseDTO(LocalDate date, double resultValue, String participantName, String disciplineName, String resultType) {
 //}
 
-public record ResultResponseDTO(int id, LocalDate date, double resultValue, String participantName, String disciplineName, String resultType, String results) {
+public record ResultResponseDTO(int id, LocalDate date, double resultValue, String participantName, String disciplineName, String resultType, String result) {
 
 }
