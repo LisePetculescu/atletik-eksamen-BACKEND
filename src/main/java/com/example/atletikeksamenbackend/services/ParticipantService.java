@@ -116,8 +116,5 @@ public class ParticipantService {
                 .collect(Collectors.toList());
     }
 
-//    public ParticipantResponseDTO getParticipantDetailsById(int id) {
-//        Participant participant = participantRepository.findById(id).orElseThrow();
-//        List<Result> results = resultRepository.findAllByParticipant(participant);
-//    }
+
 }

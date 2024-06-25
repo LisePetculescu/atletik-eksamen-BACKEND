@@ -4,7 +4,9 @@ import com.example.atletikeksamenbackend.DTOs.request.ParticipantRequestDTO;
 import com.example.atletikeksamenbackend.DTOs.response.ParticipantResponseDTO;
 import com.example.atletikeksamenbackend.ENUMs.AgeGroup;
 import com.example.atletikeksamenbackend.ENUMs.Gender;
+import com.example.atletikeksamenbackend.ENUMs.ResultType;
 import com.example.atletikeksamenbackend.models.Club;
+import com.example.atletikeksamenbackend.models.Discipline;
 import com.example.atletikeksamenbackend.models.Participant;
 import com.example.atletikeksamenbackend.models.Result;
 import com.example.atletikeksamenbackend.repositories.ClubRepository;
@@ -18,9 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -51,14 +51,13 @@ class ParticipantServiceTest {
     }
 
 
-
-
     @Test
     void createParticipant() {
         // Arrange
-        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doe", 45, Gender.BINARY, "ClubName" );
+        Set<Discipline> disciplines = new HashSet<>(Arrays.asList(new Discipline("Running", ResultType.TIME), new Discipline("Swimming", ResultType.DISTANCE)));
+        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doe", 45, Gender.BINARY, "ClubName", disciplines);
         Club club = new Club("ClubName");
-        Participant participant = new Participant("John Doe", 45, Gender.BINARY, club);
+        Participant participant = new Participant("John Doe", 45, Gender.BINARY, club, disciplines);
 
         // Mock the clubRepository behavior
         when(clubRepository.findByName("ClubName")).thenReturn(Optional.of(club));
@@ -72,9 +71,10 @@ class ParticipantServiceTest {
         // Assert
         assertNotNull(responseDTO);
         assertEquals("John Doe", responseDTO.name());
-        assertEquals("BINARY", responseDTO.gender());
-        assertEquals("SENIOR", responseDTO.ageGroup());
+        assertEquals(Gender.BINARY, responseDTO.gender());
+        assertEquals(AgeGroup.SENIOR, responseDTO.ageGroup());
         assertEquals("ClubName", responseDTO.clubName());
+        assertEquals(2, responseDTO.disciplines().size());
 
         // Verify repository interactions
         verify(clubRepository).findByName("ClubName");
@@ -82,22 +82,50 @@ class ParticipantServiceTest {
     }
 
 
+
+//    @Test
+//    void createParticipant() {
+//        // Arrange
+//        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doe", 45, Gender.BINARY, "ClubName" );
+//        Club club = new Club("ClubName");
+//        Participant participant = new Participant("John Doe", 45, Gender.BINARY, club);
+//
+//        // Mock the clubRepository behavior
+//        when(clubRepository.findByName("ClubName")).thenReturn(Optional.of(club));
+//
+//        // Mock the participantRepository behavior
+//        when(participantRepository.save(any(Participant.class))).thenReturn(participant);
+//
+//        // Act
+//        ParticipantResponseDTO responseDTO = participantService.createParticipant(requestDTO);
+//
+//        // Assert
+//        assertNotNull(responseDTO);
+//        assertEquals("John Doe", responseDTO.name());
+//        assertEquals("BINARY", responseDTO.gender());
+//        assertEquals("SENIOR", responseDTO.ageGroup());
+//        assertEquals("ClubName", responseDTO.clubName());
+//
+//        // Verify repository interactions
+//        verify(clubRepository).findByName("ClubName");
+//        verify(participantRepository).save(any(Participant.class));
+//    }
+
     @Test
     void updateParticipant() {
         // Arrange
-        // Sample existing participant
-        Participant existingParticipant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"));
-        existingParticipant.setId(1); // Assign an ID to mock an existing participant
+        Set<Discipline> initialDisciplines = new HashSet<>(Arrays.asList(new Discipline("Running", ResultType.TIME), new Discipline("Swimming", ResultType.DISTANCE)));
+        Participant existingParticipant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"), initialDisciplines);
+        existingParticipant.setId(1);
 
-        // Updated data in DTO
-        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doan Updated", 32, Gender.MALE,"New ClubName" );
+        Set<Discipline> updatedDisciplines = new HashSet<>(List.of(new Discipline("new", ResultType.TIME)));
+        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doan Updated", 32, Gender.MALE, "New ClubName", updatedDisciplines);
 
-        // Mock repository behavior
         when(participantRepository.findById(1)).thenReturn(Optional.of(existingParticipant));
         when(clubRepository.findByName("New ClubName")).thenReturn(Optional.of(new Club("New ClubName")));
         when(participantRepository.save(any(Participant.class))).thenAnswer(invocation -> {
             Participant updatedParticipant = invocation.getArgument(0);
-            updatedParticipant.setId(existingParticipant.getId()); // Ensure ID remains unchanged
+            updatedParticipant.setId(existingParticipant.getId());
             return updatedParticipant;
         });
 
@@ -107,21 +135,58 @@ class ParticipantServiceTest {
         // Assert
         assertNotNull(responseDTO);
         assertEquals("John Doan Updated", responseDTO.name());
-        assertEquals("MALE", responseDTO.gender()); // Ensure gender matches the updated requestDTO
-        assertEquals("ADULT", responseDTO.ageGroup()); // Assuming "ADULT" is correct based on your implementation
+        assertEquals(Gender.MALE, responseDTO.gender());
+        assertEquals(AgeGroup.ADULT, responseDTO.ageGroup());
+        assertEquals("New ClubName", responseDTO.clubName());
+        assertEquals(1, responseDTO.disciplines().size());
+        assertEquals("new", responseDTO.disciplines().get(0).name());
 
-        // Verify repository interactions
         verify(participantRepository).findById(1);
         verify(clubRepository).findByName("New ClubName");
-        verify(participantRepository).save(any(Participant.class)); // Ensure save was called with any Participant
+        verify(participantRepository).save(any(Participant.class));
     }
+
+
+//    @Test
+//    void updateParticipant() {
+//        // Arrange
+//        // Sample existing participant
+//        Participant existingParticipant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName");
+//        existingParticipant.setId(1); // Assign an ID to mock an existing participant
+//
+//        // Updated data in DTO
+//        ParticipantRequestDTO requestDTO = new ParticipantRequestDTO("John Doan Updated", 32, Gender.MALE,"New ClubName" );
+//
+//        // Mock repository behavior
+//        when(participantRepository.findById(1)).thenReturn(Optional.of(existingParticipant));
+//        when(clubRepository.findByName("New ClubName")).thenReturn(Optional.of(new Club("New ClubName")));
+//        when(participantRepository.save(any(Participant.class))).thenAnswer(invocation -> {
+//            Participant updatedParticipant = invocation.getArgument(0);
+//            updatedParticipant.setId(existingParticipant.getId()); // Ensure ID remains unchanged
+//            return updatedParticipant;
+//        });
+//
+//        // Act
+//        ParticipantResponseDTO responseDTO = participantService.updateParticipant(1, requestDTO);
+//
+//        // Assert
+//        assertNotNull(responseDTO);
+//        assertEquals("John Doan Updated", responseDTO.name());
+//        assertEquals("MALE", responseDTO.gender()); // Ensure gender matches the updated requestDTO
+//        assertEquals("ADULT", responseDTO.ageGroup()); // Assuming "ADULT" is correct based on your implementation
+//
+//        // Verify repository interactions
+//        verify(participantRepository).findById(1);
+//        verify(clubRepository).findByName("New ClubName");
+//        verify(participantRepository).save(any(Participant.class)); // Ensure save was called with any Participant
+//    }
 
 
     @Test
     void deleteParticipant_ParticipantExistsAndNoResults() {
         // Arrange
-        Participant participant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"));
-        participant.setId(1);
+        Set<Discipline> initialDisciplines = new HashSet<>(Arrays.asList(new Discipline("Running", ResultType.TIME), new Discipline("Swimming", ResultType.DISTANCE)));
+        Participant participant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"), initialDisciplines);
 
         when(participantRepository.findById(1)).thenReturn(Optional.of(participant));
         when(resultRepository.findAllByParticipant(participant)).thenReturn(Collections.emptyList());
@@ -173,7 +238,9 @@ class ParticipantServiceTest {
     @Test
     void deleteParticipant_ParticipantHasResults() {
         // Arrange
-        Participant participant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"));
+        Set<Discipline> initialDisciplines = new HashSet<>(Arrays.asList(new Discipline("Running", ResultType.TIME), new Discipline("Swimming", ResultType.DISTANCE)));
+        Participant participant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"), initialDisciplines);
+//        Participant participant = new Participant("John Doe", 30, Gender.MALE, new Club("ClubName"));
         participant.setId(1);
         List<Result> results = Collections.singletonList(new Result());
         when(participantRepository.findById(1)).thenReturn(Optional.of(participant));
