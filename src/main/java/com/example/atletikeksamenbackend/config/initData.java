@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @Component
@@ -50,18 +51,6 @@ public class initData implements CommandLineRunner {
     private void createClubs() {
         List<Club> clubs = new ArrayList<>();
 
-        // Create clubs and add them to the list
-//        Club club1 = new Club("Københavns Atletik Forening");
-//        Club club2 = new Club("Aarhus Atletik Forening");
-//        Club club3 = new Club("Odense Atletik Forening");
-//        Club club4 = new Club("Aalborg Atletik Forening");
-//        Club club5 = new Club("Christianhavns Atletik Forening");
-//        Club club6 = new Club("Roskilde Atletik Forening");
-//        Club club7 = new Club("Køge Atletik Forening");
-//        Club club8 = new Club("Horsens Atletik Forening");
-//        Club club9 = new Club("Helsingør Atletik Forening");
-//        Club club10 = new Club("Hillerød Atletik Forening");
-
         clubs.add(new Club("Københavns Atletik Forening"));
         clubs.add(new Club("Aarhus Atletik Forening"));
         clubs.add(new Club("Odense Atletik Forening"));
@@ -93,28 +82,37 @@ public class initData implements CommandLineRunner {
         Club helsingør = clubRepository.findByName("Helsingør Atletik Forening").orElseThrow();
         Club hillerød = clubRepository.findByName("Hillerød Atletik Forening").orElseThrow();
 
-        participants.add(new Participant("John Doe", 40, Gender.MALE, københavn));
-        participants.add(new Participant("Jane Smith", 22, Gender.FEMALE, aarhus));
-        participants.add(new Participant("Michael Johnson", 66, Gender.TRANSfTm, odense));
-        participants.add(new Participant("Emily Brown", 7, Gender.BINARY, aalborg));
-        participants.add(new Participant("David Williams", 26, Gender.MALE, christianhavn));
-        participants.add(new Participant("Sarah Davis", 36, Gender.TRANSmTf, roskilde));
-        participants.add(new Participant("Robert Miller", 10, Gender.BINARY, køge));
-        participants.add(new Participant("Jessica Wilson", 16, Gender.FEMALE, horsens));
-        participants.add(new Participant("Matthew Moore", 29, Gender.MALE, helsingør));
-        participants.add(new Participant("Olivia Taylor", 30, Gender.TRANSmTf, hillerød));
+        participants.add(new Participant("John Doe", 40, Gender.MALE, københavn, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Jane Smith", 22, Gender.FEMALE, aarhus, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Michael Johnson", 66, Gender.TRANSfTm, odense, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Emily Brown", 7, Gender.BINARY, aalborg, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("David Williams", 26, Gender.MALE, christianhavn, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Sarah Davis", 36, Gender.TRANSmTf, roskilde, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Robert Miller", 10, Gender.BINARY, køge, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Jessica Wilson", 16, Gender.FEMALE, horsens, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Matthew Moore", 29, Gender.MALE, helsingør, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
+        participants.add(new Participant("Olivia Taylor", 30, Gender.TRANSmTf, hillerød, Set.copyOf(
+                disciplineRepository.findAll()
+        )));
 
-
-//        participants.add(new Participant("John Doe", 25, Gender.MALE, sampleClub));
-//        participants.add(new Participant("Jane Smith", 22, Gender.FEMALE, sampleClub));
-//        participants.add(new Participant("Michael Johnson", 27, Gender.TRANSfTm, sampleClub));
-//        participants.add(new Participant("Emily Brown", 24, Gender.FEMALE, sampleClub));
-//        participants.add(new Participant("David Williams", 26, Gender.MALE, sampleClub));
-//        participants.add(new Participant("Sarah Davis", 23, Gender.FEMALE, sampleClub));
-//        participants.add(new Participant("Robert Miller", 28, Gender.MALE, sampleClub));
-//        participants.add(new Participant("Jessica Wilson", 21, Gender.FEMALE, sampleClub));
-//        participants.add(new Participant("Matthew Moore", 29, Gender.BINARY, sampleClub));
-//        participants.add(new Participant("Olivia Taylor", 30, Gender.TRANSmTf, sampleClub);
 
 
         // Save all participants to the database

@@ -35,17 +35,21 @@ public class Participant {
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Result> results = new ArrayList<>();
 
+    @ManyToMany()
+    private Set<Discipline> disciplines = new HashSet<>();
+
 
     @Transient
     public AgeGroup getAgeGroup() {
         return AgeGroup.fromAge(this.age);
     }
 
-    public Participant(String name, int age, Gender gender, Club club) {
+    public Participant(String name, int age, Gender gender, Club club, Set<Discipline> disciplines) {
         this.name = name;
         this.age = age;
         this.gender = gender;
         this.club = club;
+        this.disciplines = disciplines;
     }
 
     public void addResult(Result result) {

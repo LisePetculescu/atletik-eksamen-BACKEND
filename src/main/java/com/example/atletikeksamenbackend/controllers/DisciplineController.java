@@ -1,9 +1,7 @@
 package com.example.atletikeksamenbackend.controllers;
 
 import com.example.atletikeksamenbackend.DTOs.response.DisciplineResponseDTO;
-import com.example.atletikeksamenbackend.models.Discipline;
 import com.example.atletikeksamenbackend.services.DisciplineService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

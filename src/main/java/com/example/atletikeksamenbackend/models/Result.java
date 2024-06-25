@@ -1,5 +1,6 @@
 package com.example.atletikeksamenbackend.models;
 
+import com.example.atletikeksamenbackend.ENUMs.ResultType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,11 +25,9 @@ public class Result {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "participant_id")
     private Participant participant;
 
     @ManyToOne
-    @JoinColumn(name = "discipline_id")
     private Discipline discipline;
 
 
@@ -42,6 +41,28 @@ public class Result {
 
     public String getResultType() {
         return discipline.getResultType().toString();
+    }
+
+    public String getResult() {
+        if (discipline.getResultType().equals(ResultType.TIME)) {
+            int TotalSeconds = (int) resultValue;
+            int Hours = TotalSeconds / 3600;
+            int Minutes = (TotalSeconds % 3600) / 60;
+            int Seconds = TotalSeconds % 60;
+            int Milliseconds = (int) ((resultValue - (int) resultValue) * 1000);
+            if (Hours == 0) {
+                if (Minutes == 0) {
+                    return String.format("%02d:%03d", Seconds, Milliseconds);
+                }
+                return String.format("%02d:%02d:%03d", Minutes, Seconds, Milliseconds);
+            }  else {
+                return String.format("%02d:%02d:%02d:%03d", Hours, Minutes, Seconds, Milliseconds);
+            }
+
+
+        } else {
+            return String.format("%.0f", resultValue);
+        }
     }
 }
 

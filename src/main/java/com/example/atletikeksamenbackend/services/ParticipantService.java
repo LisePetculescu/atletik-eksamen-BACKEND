@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,11 +30,15 @@ public class ParticipantService {
     }
 
     public ParticipantResponseDTO toDTO(Participant participant) {
-        List<DisciplineResponseDTO> disciplines = participant.getResults().stream()
-                .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType().toString()))
-                .collect(Collectors.toList());
+//        List<DisciplineResponseDTO> disciplines = participant.getResults().stream()
+//                .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType()))
+//                .collect(Collectors.toList());
 
-        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString(), disciplines);
+        List<DisciplineResponseDTO> disciplines = participant.getDisciplines().stream()
+                .map(discipline -> new DisciplineResponseDTO(discipline.getId(), discipline.getName(), discipline.getResultType()))
+                .toList();
+
+        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender(),  participant.getAgeGroup(), disciplines);
     }
 
 //    public ParticipantResponseDTO toDTO(Participant participant) {
@@ -44,7 +49,7 @@ public class ParticipantService {
         Club club = clubRepository.findByName(participantRequestDTO.clubName())
                 .orElseThrow(() -> new IllegalArgumentException("Club not found with name: " + participantRequestDTO.clubName()));
 
-        return new Participant(participantRequestDTO.name(), participantRequestDTO.age(), participantRequestDTO.gender(), club);
+        return new Participant(participantRequestDTO.name(), participantRequestDTO.age(), participantRequestDTO.gender(), club, participantRequestDTO.disciplines());
     }
 
     public List<ParticipantResponseDTO> getAllParticipants() {
@@ -112,7 +117,7 @@ public class ParticipantService {
                 .orElseThrow(() -> new IllegalArgumentException("Participant not found with id: " + participantId));
 
         return participant.getResults().stream()
-                .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType().toString()))
+                .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType()))
                 .collect(Collectors.toList());
     }
 }

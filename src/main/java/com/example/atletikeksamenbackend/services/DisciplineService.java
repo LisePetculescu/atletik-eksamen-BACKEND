@@ -17,7 +17,7 @@ public class DisciplineService {
     }
 
     public DisciplineResponseDTO toDTO(Discipline discipline) {
-        return new DisciplineResponseDTO(discipline.getId(), discipline.getName(), discipline.getResultType().toString());
+        return new DisciplineResponseDTO(discipline.getId(), discipline.getName(), discipline.getResultType());
     }
 
 //    public Discipline fromDTO(DisciplineResponseDTO disciplineResponseDTO) {
