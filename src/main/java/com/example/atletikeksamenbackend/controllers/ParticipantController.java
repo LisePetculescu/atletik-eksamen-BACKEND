@@ -33,6 +33,8 @@ public class ParticipantController {
         return participantService.getParticipantById(id);
     }
 
+
+
     @GetMapping("/name/{name}")
     public ResponseEntity<ParticipantResponseDTO> getParticipantByName(@PathVariable String name) {
         Optional<ParticipantResponseDTO> participant = participantService.getParticipantByName(name);

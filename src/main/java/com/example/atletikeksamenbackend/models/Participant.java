@@ -2,7 +2,10 @@ package com.example.atletikeksamenbackend.models;
 
 import com.example.atletikeksamenbackend.ENUMs.AgeGroup;
 import com.example.atletikeksamenbackend.ENUMs.Gender;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,8 +36,13 @@ public class Participant {
     @ManyToOne
     private Club club;
 
-    @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Result> results = new ArrayList<>();
+    @JsonManagedReference
+    @OneToMany(mappedBy = "participant")
+    private List<Result> results;
+
+//    @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY)
+////    @JsonManagedReference
+//    private List<Result> results = new ArrayList<>();
 
     @ManyToMany()
     private Set<Discipline> disciplines = new HashSet<>();
@@ -60,45 +69,3 @@ public class Participant {
     }
 
 }
-
-
-//@Entity
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//public class Participant {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private int id;
-//
-//    private String name;
-//    private int age;
-//
-//    @Enumerated(EnumType.STRING)
-//    private Gender gender;
-//
-//    @ManyToOne
-//    private Club club;
-//
-////    @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-////    private List<Result> results;
-//
-//
-//    @Transient
-//    public AgeGroup getAgeGroup() {
-//        return AgeGroup.fromAge(this.age);
-//    }
-//
-//    public AgeGroup setAgeGroup(int age) {
-//        return AgeGroup.fromAge(this.age);
-//    }
-//
-//    public Participant(String name, int age, Gender gender, Club club) {
-//        this.name = name;
-//        this.age = age;
-//        this.gender = gender;
-//        this.club = club;
-//    }
-//}
-//

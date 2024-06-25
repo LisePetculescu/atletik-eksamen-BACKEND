@@ -3,8 +3,10 @@ package com.example.atletikeksamenbackend.services;
 import com.example.atletikeksamenbackend.DTOs.request.ParticipantRequestDTO;
 import com.example.atletikeksamenbackend.DTOs.response.DisciplineResponseDTO;
 import com.example.atletikeksamenbackend.DTOs.response.ParticipantResponseDTO;
+import com.example.atletikeksamenbackend.DTOs.response.ResultResponseDTO;
 import com.example.atletikeksamenbackend.models.Club;
 import com.example.atletikeksamenbackend.models.Participant;
+import com.example.atletikeksamenbackend.models.Result;
 import com.example.atletikeksamenbackend.repositories.ClubRepository;
 import com.example.atletikeksamenbackend.repositories.ParticipantRepository;
 import com.example.atletikeksamenbackend.repositories.ResultRepository;
@@ -12,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,20 +31,15 @@ public class ParticipantService {
     }
 
     public ParticipantResponseDTO toDTO(Participant participant) {
-//        List<DisciplineResponseDTO> disciplines = participant.getResults().stream()
-//                .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType()))
-//                .collect(Collectors.toList());
 
         List<DisciplineResponseDTO> disciplines = participant.getDisciplines().stream()
                 .map(discipline -> new DisciplineResponseDTO(discipline.getId(), discipline.getName(), discipline.getResultType()))
                 .toList();
 
-        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender(),  participant.getAgeGroup(), disciplines);
+
+        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender(),  participant.getAgeGroup(), disciplines, participant.getResults());
     }
 
-//    public ParticipantResponseDTO toDTO(Participant participant) {
-//        return new ParticipantResponseDTO(participant.getId(), participant.getName(), participant.getAge(), participant.getClub().getName(), participant.getGender().toString(),  participant.getAgeGroup().toString() );
-//    }
 
     public Participant fromDTO(ParticipantRequestDTO participantRequestDTO) {
         Club club = clubRepository.findByName(participantRequestDTO.clubName())
@@ -78,6 +74,7 @@ public class ParticipantService {
         participantToUpdate.setName(participantRequestDTO.name());
         participantToUpdate.setAge(participantRequestDTO.age());
         participantToUpdate.setGender(participantRequestDTO.gender());
+        participantToUpdate.setDisciplines(participantRequestDTO.disciplines());
 
         // Update club association if clubName is provided in the DTO
         if (participantRequestDTO.clubName() != null) {
@@ -120,4 +117,9 @@ public class ParticipantService {
                 .map(result -> new DisciplineResponseDTO(result.getDiscipline().getId(), result.getDiscipline().getName(), result.getDiscipline().getResultType()))
                 .collect(Collectors.toList());
     }
+
+//    public ParticipantResponseDTO getParticipantDetailsById(int id) {
+//        Participant participant = participantRepository.findById(id).orElseThrow();
+//        List<Result> results = resultRepository.findAllByParticipant(participant);
+//    }
 }

@@ -2,6 +2,9 @@ package com.example.atletikeksamenbackend.models;
 
 import com.example.atletikeksamenbackend.ENUMs.ResultType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +14,7 @@ import java.time.LocalDate;
 
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -25,7 +29,12 @@ public class Result {
 
     @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "participant_id")
     private Participant participant;
+
+//    @ManyToOne
+////    @JsonBackReference
+//    private Participant participant;
 
     @ManyToOne
     private Discipline discipline;
