@@ -29,17 +29,6 @@ public class ResultService {
     }
 
     public ResultResponseDTO toDTO(Result result) {
-//        List<DisciplineResponseDTO> disciplines = Collections.emptyList(); // Initialize as empty list by default
-
-
-//        if (result.getParticipant().getResults() != null) {
-//            disciplines = result.getParticipant().getResults().stream()
-//                    .map(r -> new DisciplineResponseDTO(
-//                            r.getDiscipline().getId(),
-//                            r.getDiscipline().getName(),
-//                            r.getDiscipline().getResultType()))
-//                    .toList();
-//        }
 
         return new ResultResponseDTO(
                 result.getId(),

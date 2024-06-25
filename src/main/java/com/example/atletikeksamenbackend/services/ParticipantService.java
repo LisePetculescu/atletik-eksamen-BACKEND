@@ -3,10 +3,8 @@ package com.example.atletikeksamenbackend.services;
 import com.example.atletikeksamenbackend.DTOs.request.ParticipantRequestDTO;
 import com.example.atletikeksamenbackend.DTOs.response.DisciplineResponseDTO;
 import com.example.atletikeksamenbackend.DTOs.response.ParticipantResponseDTO;
-import com.example.atletikeksamenbackend.DTOs.response.ResultResponseDTO;
 import com.example.atletikeksamenbackend.models.Club;
 import com.example.atletikeksamenbackend.models.Participant;
-import com.example.atletikeksamenbackend.models.Result;
 import com.example.atletikeksamenbackend.repositories.ClubRepository;
 import com.example.atletikeksamenbackend.repositories.ParticipantRepository;
 import com.example.atletikeksamenbackend.repositories.ResultRepository;
@@ -49,7 +47,7 @@ public class ParticipantService {
     }
 
     public List<ParticipantResponseDTO> getAllParticipants() {
-        List<Participant> participants = participantRepository.findAll();
+        List<Participant> participants = participantRepository.findAllByOrderByAgeAsc();
         return participants.stream().map(this::toDTO).toList();
     }
 
