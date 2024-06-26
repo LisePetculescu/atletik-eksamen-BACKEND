@@ -28,18 +28,22 @@ class ParticipantTest {
         System.out.println("Age group: " + result);
     }
 
+
+
     @Test
     void setWrongAgeGroup() {
         // Arrange
         Set<Discipline> initialDisciplines = new HashSet<>(Arrays.asList(new Discipline("Running", ResultType.TIME), new Discipline("Swimming", ResultType.DISTANCE)));
-        Participant participant = new Participant("John Doe", 20, Gender.MALE, new Club("ClubName"), initialDisciplines);
+        Participant participant = new Participant("John Doe", 2, Gender.MALE, new Club("ClubName"), initialDisciplines);
 //        Participant participant = new Participant("John Doe", 20, Gender.BINARY, null);
 
-        // Act
-        String result = participant.getAgeGroup().toString();
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, participant::getAgeGroup);
+//        String result = participant.getAgeGroup().toString();
 
-        // Assert
-        // check illegalArgumentException
+
+
+
     }
 
     @Test
